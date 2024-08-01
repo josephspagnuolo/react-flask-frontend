@@ -6,11 +6,7 @@ import PrimaryInputLabel from "../components/inputlabel";
 import ProfilePictureInput from "../components/profilepictureinput";
 import CountryInput from "../components/countries";
 import { useState, useEffect } from "react";
-import { createClient } from '@supabase/supabase-js'
 
-const supabaseUrl = process.env.REACT_APP_SUPABASE_URL;
-const supabaseKey = process.env.REACT_APP_SUPABASE_ANON_KEY;
-const supabase = createClient(supabaseUrl, supabaseKey);
 const imgPrefix = "https://uzczobapchtqdpahuled.supabase.co/storage/v1/object/public/fullstackdevassignment/profile/";
 
 const Edit = () => {
@@ -57,33 +53,18 @@ const Edit = () => {
       return;
     }
     setLoading(true);
-    var newFileName = "avatar" + Date.now() + ".png";
-
-    if (file) {
-      await supabase.storage
-        .from('fullstackdevassignment')
-        .remove([`profile/${fileName}`]);
-
-      await supabase.storage
-        .from('fullstackdevassignment')
-        .upload(`profile/${newFileName}`, file, {
-          upsert: true
-        });
-    }
+    const formData = new FormData();
+    if (file) formData.append('file', file);
+    formData.append('fileName', fileName);
+    formData.append('firstName', firstName);
+    formData.append('lastName', lastName);
+    formData.append('phoneNumber', phoneNumber);
+    formData.append('jobTitle', jobTitle);
+    formData.append('country', country);
     try {
       const response = await fetch("https://react-flask-backend.vercel.app/edit", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          fileName: file ? newFileName : fileName,
-          firstName,
-          lastName,
-          phoneNumber,
-          jobTitle,
-          country,
-        }),
+        body: formData,
       });
       if (!response.ok) {
         throw new Error('Network response was not ok');
