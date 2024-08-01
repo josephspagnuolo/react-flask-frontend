@@ -1,3 +1,9 @@
+### Frontend for Full Stack Developer Technical Assignment
+
+A simple React app which includes the UI, also handling making API requests to the backend to store the data, and displaying the data within the responses as the contact information.
+
+You can use the application here: [https://fullstackdevassignment.vercel.app](https://fullstackdevassignment.vercel.app/)
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
