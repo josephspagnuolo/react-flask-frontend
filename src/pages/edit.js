@@ -6,11 +6,19 @@ import PrimaryInputLabel from "../components/inputlabel";
 import ProfilePictureInput from "../components/profilepictureinput";
 import CountryInput from "../components/countries";
 import { useState, useEffect } from "react";
+import { createClient } from '@supabase/supabase-js'
+
+const supabaseUrl = process.env.REACT_APP_SUPABASE_URL;
+const supabaseKey = process.env.REACT_APP_SUPABASE_ANON_KEY;
+const supabase = createClient(supabaseUrl, supabaseKey);
+const imgPrefix = "https://uzczobapchtqdpahuled.supabase.co/storage/v1/object/public/fullstackdevassignment/profile/";
 
 const Edit = () => {
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState(true);
+  const [file, setFile] = useState(null);
+  const [fileName, setFileName] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
@@ -26,6 +34,7 @@ const Edit = () => {
       .then((data) => {
         const latestEntry = data.result[0];
         if (latestEntry) {
+          setFileName(latestEntry.file_name || "")
           setFirstName(latestEntry.first_name || "");
           setLastName(latestEntry.last_name || "");
           setPhoneNumber(latestEntry.phone_number || "");
@@ -47,6 +56,20 @@ const Edit = () => {
       alert("Phone number must be in the format (123) 456-7891");
       return;
     }
+    setLoading(true);
+    var newFileName = "avatar" + Date.now() + ".png";
+
+    if (file) {
+      await supabase.storage
+        .from('fullstackdevassignment')
+        .remove([`profile/${fileName}`]);
+
+      await supabase.storage
+        .from('fullstackdevassignment')
+        .upload(`profile/${newFileName}`, file, {
+          upsert: true
+        });
+    }
     try {
       const response = await fetch("https://react-flask-backend.vercel.app/edit", {
         method: "POST",
@@ -54,6 +77,7 @@ const Edit = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
+          fileName: file ? newFileName : fileName,
           firstName,
           lastName,
           phoneNumber,
@@ -64,11 +88,11 @@ const Edit = () => {
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
-      const data = await response.json();
+      await response.json();
     } catch (error) {
       console.error("Error:", error);
     }
-    alert("Saved!");
+    alert("Successfully saved your contact information.");
     navigate("/");
   }
 
@@ -87,7 +111,7 @@ const Edit = () => {
         <PrimaryButton text="Save" func={saveEdits} />
       </div>
       <div className="profile">
-        <ProfilePictureInput />
+        <ProfilePictureInput setter={setFile} prefix={imgPrefix} fileName={fileName} />
       </div>
       <div className="container">
         <div className="namefields">

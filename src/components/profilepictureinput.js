@@ -26,8 +26,7 @@ const CustomButton = styled(Button)({
   },
 });
 
-const ProfilePictureInput = () => {
-  const [image, setImage] = useState(null);
+const ProfilePictureInput = ({ setter, prefix, fileName }) => {
   const [preview, setPreview] = useState();
   const inputRef = useRef(null);
 
@@ -35,16 +34,13 @@ const ProfilePictureInput = () => {
     const file = e.target.files?.[0];
 
     if (file) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        setImage(reader.result);
-      };
-      reader.readAsDataURL(file);
+      setter(file);
       const objectUrl = URL.createObjectURL(file);
       setPreview(objectUrl);
     }
   };
 
+  const imgSrc = fileName === "" ? "/dog.svg" : prefix + fileName;
 
   return (
     <>
@@ -72,11 +68,11 @@ const ProfilePictureInput = () => {
         )}>
         <Avatar
           alt="Profile Picture"
-          src={preview ? preview : "/dog.svg"}
+          src={preview ? preview : imgSrc}
           sx={{
             width: 172,
             height: 172,
-            backgroundColor: preview ? 'transparent' : 'rgba(255, 109, 29, 0.85)',
+            backgroundColor: preview || fileName !== "" ? 'transparent' : 'rgba(255, 109, 29, 0.85)',
           }}
         />
       </StyledBadge>
