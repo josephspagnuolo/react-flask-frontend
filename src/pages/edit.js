@@ -19,12 +19,12 @@ const Edit = () => {
 
   useEffect(() => {
     setLoading(true);
-    fetch("https://pledgx-backend.vercel.app/", {
+    fetch("https://react-flask-backend.vercel.app/", {
       method: "GET",
     })
       .then((response) => response.json())
       .then((data) => {
-        const latestEntry = data.result[0]; // Assuming the latest entry is the first item
+        const latestEntry = data.result[0];
         if (latestEntry) {
           setFirstName(latestEntry.first_name || "");
           setLastName(latestEntry.last_name || "");
@@ -48,7 +48,7 @@ const Edit = () => {
       return;
     }
     try {
-      const response = await fetch("https://pledgx-backend.vercel.app/edit", {
+      const response = await fetch("https://react-flask-backend.vercel.app/edit", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
