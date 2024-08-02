@@ -96,11 +96,11 @@ const Edit = () => {
       </div>
       <div className="container">
         <div className="namefields">
-          <div>
+          <div className="fields">
             <PrimaryInputLabel label="First Name" htmlFor="firstName" />
             <PrimaryTextInput id="firstName" placeholder="First Name" value={firstName} setter={setFirstName} />
           </div>
-          <div>
+          <div className="fields">
             <PrimaryInputLabel label="Last Name" htmlFor="lastName" />
             <PrimaryTextInput id="lastName" placeholder="Last Name" value={lastName} setter={setLastName} />
           </div>
